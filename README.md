@@ -43,31 +43,7 @@ such as AIDO.RNA-Pert.
 > component. This is the single most important methodological lesson of the project — see
 > [the P2 erratum](docs/reports/P2_result.md) and [P2.3-B report](docs/reports/P2.3-B_result.md).
 
-## Architecture
-
-```
-                 ┌──────────────────────────────────────────────┐
-                 │  Conditioning inputs                         │
-                 │  mechanism axis : target ESM2 emb ⊕ MAP-KG   │
-                 │  sequence axis  : self-trained RNA encoder   │
-                 │                   (2.5M, InfoNCE-aligned)    │
-                 │  network axis   : STRING neighbor flags      │
-                 │                   + is_target indicator      │
-                 └─────────────────────┬────────────────────────┘
-                                       ▼
- Perturb-seq h5ad ──────►  per-gene deviation head (DeviationModel,
- (adamson / norman /        P2.3-B, 5.7M params)  ──►  pred_dev
-  replogle + scPerturb ×6)                                 │
-                                                           ▼
-                                    pred_fc = pred_dev + common_fc
-                                    (train-only shared core — no leakage)
-                                       ▼
-                 vcpe_cache export (batch inference → AIDO-cache-isomorphic schema)
-                                       ▼
-                 platform integration with ZERO new dependencies (swap the cache file)
-```
-
-Parallel tracks alongside the main chain:
+## Parallel Tracks
 
 | Module | Path | What it does |
 |---|---|---|
