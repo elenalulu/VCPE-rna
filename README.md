@@ -1,89 +1,122 @@
+<div align="center">
+
 # VCPE-rna
 
-**V**irtual-**C**ell **P**erturbation-response **E**ngine — RNA branch.
-一个许可干净（全链 MIT/Apache-2.0）的**敲低扰动响应预测引擎**：给定敲低扰动（CRISPRi/siRNA/ASO 靶基因），预测转录组层面的响应方向与幅度。定位为虚拟细胞技术栈中的**扰动响应引擎层**（伪 bulk / 转录组模态），可作为 Non-Commercial 权重（如 AIDO.RNA-Pert）的可商用替代。
+**Virtual-Cell Perturbation-response Engine — RNA branch**
 
-## 核心结果
+A license-clean (MIT / Apache-2.0 all the way down) **knockdown perturbation-response prediction engine**.
+Given a knockdown perturbation (CRISPRi / siRNA / ASO target gene), it predicts the transcriptome-wide
+response direction and magnitude — a commercially usable replacement for Non-Commercial weights
+such as AIDO.RNA-Pert.
 
-| 阶段 | 关键数字 | 状态 |
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-green.svg)]()
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.1%2B-ee4c2c.svg)]()
+[![Single GPU](https://img.shields.io/badge/Hardware-1%20x%2024GB%20GPU%20or%20CPU-orange.svg)]()
+
+</div>
+
+---
+
+## Highlights
+
+- **License-clean by construction** — architecture upstream is [MAP](https://github.com/MAGIC-AI4Med/MAP) (MIT) + MAP-KG (Apache-2.0); the RNA sequence encoder is self-trained; AIDO.RNA (Non-Commercial) is never used in any deliverable. That constraint is the reason this project exists.
+- **A documented negative result turned win** — the P2 "pass" was retracted by our own diagnostics: conditioning was short-circuited by the shared-response core. The per-gene deviation head (P2.3-B) revived conditioning in **80 seconds** of training. Full evidence chain included.
+- **Data scaling done cheaply** — 1,843 → 16,276 perturbations (×8.8) via scPerturb ingestion; legacy-domain pearson_dev **0.31 → 0.71** with a 5.7M-parameter head.
+- **Zero-dependency platform integration** — the engine ships as a precomputed cache (`vcpe_cache.json.gz`) with a schema isomorphic to the platform's existing AIDO cache: swapping the file swaps the engine.
+
+## Key Results
+
+| Stage | Headline numbers | Verdict |
 |---|---|---|
-| P1（MAP 底座 + 敲低条件化） | mse_DE 0.0215（ctrl 基线好 32%）· fm_cosine 0.9604 | ✅ G2 条件通过 |
-| P2（双轴：ESM2+KG ⊕ 自训 RNA 编码器） | fm_cosine 0.9710 —— **后被勘误撤回**：条件化被共性响应 shortcut 架空 | ⚠️ 见勘误 |
-| P2.3-B（GEARS 式逐基因残差头） | **条件化复活**：ablation_r 1.000 → 0.277，pearson_dev 0.3079，训练仅 80 秒 | ✅ G2''' 达标 |
-| 数据扩容（+scPerturb 6 数据集） | 扰动数 1,843 → 16,276（×8.8），LEGACY 域 pearson_dev **0.31 → 0.71**，overall 0.37 | ✅ 通过 |
-| ASO 效力头 v3（ASO Atlas，patent-split） | pooled Spearman 0.283 / per-screen median 0.261（含 GENCODE region 特征 +0.034） | 与 OligoAI 基线可比 |
-| siRNA 效力头 v1（Huesken 2,431 条） | CV Spearman 0.607 · 外部 Ichihara_2007_2 Spearman 0.588 | 对标 RNAGenesis 基准 |
+| **P1** — MAP base + knockdown conditioning | mse_DE **0.0215** (32% better than ctrl baseline) · fm_cosine 0.9604 | G2 conditional pass |
+| **P2** — dual-axis (ESM2+KG ⊕ self-trained RNA encoder) | fm_cosine 0.9710 — **retracted by erratum**: conditioning short-circuited by shared response | ⚠️ see erratum |
+| **P2.3-B** — GEARS-style per-gene deviation head | **Conditioning revived**: ablation_r 1.000 → 0.277 · pearson_dev **0.3079** · **80 s** training | G2''' pass |
+| **Data expansion** (+6 scPerturb datasets) | perturbations 1,843 → **16,276** (×8.8) · legacy-domain pearson_dev **0.31 → 0.71** · overall 0.37 | pass |
+| **ASO efficacy head v3** (ASO Atlas, patent-split CV) | pooled Spearman **0.283** · per-screen median 0.261 (GENCODE region features +0.034) | comparable to OligoAI baseline |
+| **siRNA efficacy head v1** (Huesken 2,431 guides) | CV Spearman **0.607** · external Ichihara_2007_2 **0.588** | matches RNAGenesis benchmark |
 
-> **科学诚实声明**：P2 的 fm_cosine 0.9710 一度被判为达标，后经三路诊断（`diag_fc.py`）证明模型学到的是数据集级**共性响应**（K562 敲低共享转录组签名），条件化被训练目标中的共性核架空（ablation_r = 1.000）。全部四项常规指标（mse/pearson/cosine/top50）都可被共享成分灌水——这是本次开源最重要的方法论教训之一，详见 [docs/reports/P2_result.md](docs/reports/P2_result.md) 勘误章节与 [docs/reports/P2.3-B_result.md](docs/reports/P2.3-B_result.md)。
+> **Scientific honesty note.** P2's fm_cosine 0.9710 was initially judged a gate pass, then retracted:
+> three-way diagnostics (`diag_fc.py`) showed the model had learned the dataset-level **shared
+> knockdown signature** (K562 core response), with conditioning bypassed (`ablation_r = 1.000`).
+> All four conventional metrics (mse / pearson / cosine / top50) can be inflated by the shared
+> component. This is the single most important methodological lesson of the project — see
+> [the P2 erratum](docs/reports/P2_result.md) and [P2.3-B report](docs/reports/P2.3-B_result.md).
 
-## 全链架构
+## Architecture
 
 ```
-                    ┌─────────────────────────────────────────────┐
-                    │  条件化输入                                  │
-                    │  机制轴: 靶基因 ESM2 嵌入 ⊕ MAP-KG 对齐      │
-                    │  序列轴: 自训 RNA 编码器 (2.5M, InfoNCE)     │
-                    │  网络轴: STRING 邻居指示 + is_target         │
-                    └──────────────────┬──────────────────────────┘
+                 ┌──────────────────────────────────────────────┐
+                 │  Conditioning inputs                         │
+                 │  mechanism axis : target ESM2 emb ⊕ MAP-KG   │
+                 │  sequence axis  : self-trained RNA encoder   │
+                 │                   (2.5M, InfoNCE-aligned)    │
+                 │  network axis   : STRING neighbor flags      │
+                 │                   + is_target indicator      │
+                 └─────────────────────┬────────────────────────┘
                                        ▼
-   Perturb-seq h5ad ──► 逐基因偏差头 DeviationModel ──► pred_dev (residual)
-   (adamson/norman/replogle    (P2.3-B, 5.7M params)        │
-    + scPerturb ×6)                                          ▼
-                                              pred_fc = pred_dev + common_fc
-                                                       (train-only 共性核)
+ Perturb-seq h5ad ──────►  per-gene deviation head (DeviationModel,
+ (adamson / norman /        P2.3-B, 5.7M params)  ──►  pred_dev
+  replogle + scPerturb ×6)                                 │
+                                                           ▼
+                                    pred_fc = pred_dev + common_fc
+                                    (train-only shared core — no leakage)
                                        ▼
-                    vcpe_cache 导出（批量推理 → AIDO 缓存同构 schema）
+                 vcpe_cache export (batch inference → AIDO-cache-isomorphic schema)
                                        ▼
-                    平台零依赖接入（换缓存文件即完成替换）
+                 platform integration with ZERO new dependencies (swap the cache file)
 ```
 
-横向模块（与主链并行）：
+Parallel tracks alongside the main chain:
 
-- **L2 RNA 编码器扩容**（`src/l2/`）：RNAcentral 45M → 20-500nt 过滤去重 → MLM 预训练 → 对比对齐到 ESM2 嵌入空间
-- **效力头**（`src/efficacy/`）：ASO 序列+化学修饰 → 敲低深度（ASO Atlas 19 万条）；siRNA guide → 效率（Huesken 基准）；供 reagent design 与响应先验使用
-- **数据扩容**（`src/data_expansion/` + `src/maprna_p3/ingest_*.py`）：scPerturb Zenodo 摄入 → 伪 bulk 处理
+| Module | Path | What it does |
+|---|---|---|
+| L2 RNA encoder | `src/l2/` | RNAcentral 45M seqs → 20–500 nt filter + dedup → MLM pretraining → InfoNCE alignment into ESM2 embedding space |
+| Efficacy heads | `src/efficacy/` | ASO sequence + chemistry → knockdown depth (ASO Atlas, 188k gapmers); siRNA guide → efficiency (Huesken benchmark) |
+| Data expansion | `src/data_expansion/`, `src/maprna_p3/ingest_*.py` | scPerturb (Zenodo) download → pseudobulk processing |
 
-## 全链证据
+## Evidence Chain
 
-| 报告 | 内容 |
+| Report | Contents |
 |---|---|
-| [docs/PLAN.md](docs/PLAN.md) | 项目规划 v0.3：D1-D3 决策、阶段计划与 go/no-go、基准协议、许可清单 |
-| [docs/reports/P1_result.md](docs/reports/P1_result.md) | P1 G2 判定：13 epoch 轨迹、AMP 尖峰诊断 |
-| [docs/reports/P2_result.md](docs/reports/P2_result.md) | P2 终判 + **勘误**：共性响应 shortcut 的完整证据链 |
-| [docs/reports/P2.3-B_result.md](docs/reports/P2.3-B_result.md) | 条件化复活：架构为什么这次成了（逐基因直出 vs 加性 token） |
-| [docs/reports/数据扩容专项验收报告.md](docs/reports/数据扩容专项验收报告.md) | ×8.8 扩容后分域对打表与域梯度解读 |
-| [docs/reports/P3_接入分析.md](docs/reports/P3_接入分析.md) | 平台接入设计：离线缓存模式，零新依赖 |
-| [docs/reports/ASO_siRNA_数据调研.md](docs/reports/ASO_siRNA_数据调研.md) | ASO/siRNA 公开数据版图（ASO Atlas 等） |
-| [docs/reports/L2训练.md](docs/reports/L2训练.md) | L2 编码器预训练记录 |
+| [docs/PLAN.md](docs/PLAN.md) | Project plan v0.3: decisions D1–D3, staged go/no-go gates, benchmark protocol, license checklist |
+| [docs/reports/P1_result.md](docs/reports/P1_result.md) | P1 gate report: 13-epoch trajectory, AMP spike diagnosis |
+| [docs/reports/P2_result.md](docs/reports/P2_result.md) | P2 verdict + **erratum**: complete evidence chain of the shared-response shortcut |
+| [docs/reports/P2.3-B_result.md](docs/reports/P2.3-B_result.md) | Why conditioning came back to life (per-gene direct head vs additive token) |
+| [docs/reports/数据扩容专项验收报告.md](docs/reports/数据扩容专项验收报告.md) | ×8.8 expansion: per-domain comparison table and domain-gradient interpretation |
+| [docs/reports/P3_接入分析.md](docs/reports/P3_接入分析.md) | Platform integration design: offline cache mode, zero new dependencies |
+| [docs/reports/ASO_siRNA_数据调研.md](docs/reports/ASO_siRNA_数据调研.md) | Public ASO/siRNA data landscape (ASO Atlas and friends) |
+| [docs/reports/L2训练.md](docs/reports/L2训练.md) | L2 encoder pretraining log |
 
-## 仓库结构
+## Repository Layout
 
 ```
 src/
-  maprna_p1/   P1 训练（MAP 底座 + 敲低条件化；需 patched MAP repo + SE 权重）
-  maprna_p2/   P2 双轴训练 + RNA 序列编码器（InfoNCE 对齐）+ 三路诊断 diag_fc
-  maprna_p3/   P2.3-B 逐基因偏差头（独立训练，无 SE/MAP 依赖）+ 数据摄入 + 公平评测
-  l2/          RNAcentral 下载 → 过滤去重 → tokenize → MLM 预训练 → 对比对齐
-  efficacy/    ASO/siRNA 效力头（ASO Atlas / OligoGym / Huesken）+ 预测服务
-  data_expansion/  scPerturb Zenodo 下载与摄入
-  export_vcpe_cache.py   平台缓存导出（AIDO 缓存同构 schema）
-docs/          PLAN、全链报告、GPU 任务卡（gpu_pack/）
-results/       训练日志、CV 结果、评测产物（大 ckpt 不入库，见下）
-data/          数据获取指南（README.md，数据本体不入库）
+  maprna_p1/        P1 training (MAP base + knockdown conditioning; needs patched MAP repo + SE weights)
+  maprna_p2/        P2 dual-axis training + RNA sequence encoder (InfoNCE alignment) + diag_fc diagnostics
+  maprna_p3/        P2.3-B per-gene deviation head (standalone, no SE/MAP deps) + data ingestion + fair eval
+  l2/               RNAcentral download → filter/dedup → tokenize → MLM pretrain → align
+  efficacy/         ASO/siRNA efficacy heads (ASO Atlas / OligoGym / Huesken) + predict service
+  data_expansion/   scPerturb Zenodo download & ingestion
+  export_vcpe_cache.py   platform cache export (AIDO-cache-isomorphic schema)
+docs/               PLAN, full evidence-chain reports, GPU task cards (gpu_pack/)
+results/            train logs, CV metrics, eval artifacts (large ckpts not in git — see below)
+data/               data acquisition guide (data itself is not redistributed)
 ```
 
 ## Quickstart
 
-P3 响应头**不依赖** SE 底座 / MAP repo / flash-attention，单卡或 CPU 数分钟可复现：
+The P3 response head has **no dependency** on the SE backbone, the MAP repo, or flash-attention —
+it reproduces in minutes on a single GPU or CPU:
 
 ```bash
 pip install -r requirements.txt
 
-# 1. 准备数据（见 data/README.md）：
-#    - Perturb-seq h5ad（GEARS 格式：adamson / norman / replogle_rpe1_essential）
-#    - ESM2 基因嵌入表 Homo_sapiens.GRCh38.gene_symbol_to_embedding_ESM2.pt
+# 1) Prepare data (see data/README.md):
+#    - Perturb-seq h5ad in GEARS format (adamson / norman / replogle_rpe1_essential)
+#    - ESM2 gene embedding table Homo_sapiens.GRCh38.gene_symbol_to_embedding_ESM2.pt
 
-# 2. 训练 P3 逐基因偏差头（60 epochs ≈ 80 秒 @GPU；CPU 亦可）
+# 2) Train the P3 per-gene deviation head (60 epochs ≈ 80 s on GPU; CPU works too)
 python src/maprna_p3/train_p3.py \
   --data_dirs data/adamson/perturb_processed.h5ad \
               data/norman/perturb_processed.h5ad \
@@ -91,22 +124,25 @@ python src/maprna_p3/train_p3.py \
   --esm_table data/drive_weights/Homo_sapiens.GRCh38.gene_symbol_to_embedding_ESM2.pt \
   --out_dir ./p3_out --epochs 60
 
-# 3. 完整链路（P1/P2 需要 MAP 底座 + SE 权重，单卡 24G）
-#    命令模板见各脚本 docstring 与 docs/PLAN.md
+# 3) Full chain (P1/P2 need the MAP base + SE weights, 1 × 24G GPU)
+#    Command templates live in each script's docstring and in docs/PLAN.md
 ```
 
-**预训练产物**：`results/p3_v21e/` 内含对齐后的 RNA 序列编码器（`rna_enc_from_ckpt.pt`，9MB）与全基因向量缓存示例。完整 ckpt（P3 响应头 428MB、效力头 ~410MB 等）计划发布于 GitHub Releases / HuggingFace，不入 git。
+**Pretrained artifacts.** `results/p3_v21e/` ships the aligned RNA sequence encoder
+(`rna_enc_from_ckpt.pt`, 9 MB) and an example full-gene vector cache. Full checkpoints
+(P3 response head 428 MB, efficacy heads ~410 MB, …) are planned for GitHub Releases /
+HuggingFace and are intentionally kept out of git.
 
-## 许可与归属
+## License & Attribution
 
-- 本仓库代码：**MIT License**
-- 架构上游：[MAP](https://github.com/MAGIC-AI4Med/MAP)（MIT）+ MAP-KG（Apache-2.0）；P2.3-B 偏差头为独立自研
-- 数据许可与获取方式逐项见 [data/README.md](data/README.md)
-- ⚠️ **ASO Atlas 为 USPTO 专利衍生数据**，本仓库只含训练/评测代码不含数据；任何商用前需独立法务复核
-- AIDO.RNA-650M（Non-Commercial）仅限内部研究消融，不进任何交付物——这也是本项目存在的理由
+- Code in this repository: **MIT License** (see [LICENSE](LICENSE))
+- Architecture upstream: [MAP](https://github.com/MAGIC-AI4Med/MAP) (MIT) + MAP-KG (Apache-2.0); the P2.3-B deviation head is an independent implementation
+- Per-dataset licenses and acquisition paths: [data/README.md](data/README.md)
+- ⚠️ **ASO Atlas is derived from USPTO patents.** This repository ships training/eval code only, never the data; any commercial use requires independent legal review
+- AIDO.RNA-650M (Non-Commercial) was used for internal ablation only and appears in no deliverable — which is precisely why this project exists
 
-## 方法论教训（选摘）
+## Methodology Notes (selected)
 
-1. **评估必须含"去共享成分后的判别力"指标**（pearson_dev / top50_dev + zeroPert ablation），否则 G-gate 会被共性响应骗过（P2 教训）
-2. **加性 token 进大主干残差流会被结构性淹没**——数据受限场景下逐基因直出残差头是正确架构（P2.3-B 结论）
-3. **数据扩容后 LR 需重标定**：×8.8 数据 + lr 1e-3 会塌缩进零残差盆地，lr 3e-4 全程零失稳
+1. **Evaluation must include shared-component-free discrimination metrics** (`pearson_dev` / `top50_dev` + zeroPert ablation) — otherwise any gate can be fooled by the shared response (the P2 lesson).
+2. **Additive tokens get structurally drowned** in a large backbone's residual stream — in data-limited regimes, a per-gene direct residual head is the right architecture (the P2.3-B conclusion).
+3. **Re-calibrate LR after data scaling**: ×8.8 data + lr 1e-3 collapses into the zero-residual basin; lr 3e-4 trains 40 epochs with zero instability.
