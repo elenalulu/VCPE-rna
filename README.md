@@ -56,13 +56,14 @@ such as AIDO.RNA-Pert.
 | Report | Contents |
 |---|---|
 | [docs/PLAN.md](docs/PLAN.md) | Project plan v0.3: decisions D1–D3, staged go/no-go gates, benchmark protocol, license checklist |
-| [docs/reports/P1_result.md](docs/reports/P1_result.md) | P1 gate report: 13-epoch trajectory, AMP spike diagnosis |
-| [docs/reports/P2_result.md](docs/reports/P2_result.md) | P2 verdict + **erratum**: complete evidence chain of the shared-response shortcut |
-| [docs/reports/P2.3-B_result.md](docs/reports/P2.3-B_result.md) | Why conditioning came back to life (per-gene direct head vs additive token) |
-| [docs/reports/数据扩容专项验收报告.md](docs/reports/数据扩容专项验收报告.md) | ×8.8 expansion: per-domain comparison table and domain-gradient interpretation |
-| [docs/reports/P3_接入分析.md](docs/reports/P3_接入分析.md) | Platform integration design: offline cache mode, zero new dependencies |
-| [docs/reports/ASO_siRNA_数据调研.md](docs/reports/ASO_siRNA_数据调研.md) | Public ASO/siRNA data landscape (ASO Atlas and friends) |
-| [docs/reports/L2训练.md](docs/reports/L2训练.md) | L2 encoder pretraining log |
+| [docs/reports/p1_result.md](docs/reports/p1_result.md) | P1 gate report: 13-epoch trajectory, AMP spike diagnosis |
+| [docs/reports/p2_result.md](docs/reports/p2_result.md) | P2 verdict + **erratum**: complete evidence chain of the shared-response shortcut |
+| [docs/reports/p2_3b_result.md](docs/reports/p2_3b_result.md) | Why conditioning came back to life (per-gene direct head vs additive token) |
+| [docs/reports/data_expansion_report.md](docs/reports/data_expansion_report.md) | ×8.8 expansion: per-domain comparison table and domain-gradient interpretation |
+| [docs/reports/p3_platform_integration.md](docs/reports/p3_platform_integration.md) | Platform integration design: offline cache mode, zero new dependencies |
+| [docs/reports/aso_sirna_data_landscape.md](docs/reports/aso_sirna_data_landscape.md) | Public ASO/siRNA data landscape (ASO Atlas and friends) |
+| [docs/reports/l2_pretraining_log.md](docs/reports/l2_pretraining_log.md) | L2 encoder pretraining log |
+| [docs/virtual_liver_p0_report.md](docs/virtual_liver_p0_report.md) | Virtual-liver P0: organ-level exam design, donor-context repair (P0.5), G0 adjudication |
 
 ## Repository Layout
 
@@ -75,7 +76,7 @@ src/
   efficacy/         ASO/siRNA efficacy heads (ASO Atlas / OligoGym / Huesken) + predict service
   data_expansion/   scPerturb Zenodo download & ingestion
   export_vcpe_cache.py   platform cache export (AIDO-cache-isomorphic schema)
-docs/               PLAN, full evidence-chain reports, GPU task cards (gpu_pack/)
+docs/               PLAN, full evidence-chain reports
 results/            train logs, CV metrics, eval artifacts (large ckpts not in git — see below)
 data/               data acquisition guide (data itself is not redistributed)
 ```

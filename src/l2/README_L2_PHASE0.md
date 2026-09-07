@@ -1,43 +1,31 @@
-# L2 Phase 0 运行手册（数据准备，全部本机）
+# L2 Phase 0 Runbook (data preparation, all local)
 
-前置：`src/l2/` 三个脚本；产物目录建议 `D:/data/l2/`（磁盘预算 ~50GB）。
+Prerequisites: the three scripts in `src/l2/`; output directory suggestion `./data/l2/`
+(disk budget ~50 GB).
 
-## 运行顺序
+## Run order
 
 ```bash
-cd D:/WorkBuddy/alphafold-web/VCPE/VCPE_rna/src/l2
+cd <repo>/src/l2
 
-# 1. 下载（10.92GB，断点续传；--list-only 可先看清单）
-python download_rnacentral.py --out-dir D:/data/l2 --list-only
-python download_rnacentral.py --out-dir D:/data/l2
+# 1. Download (10.92 GB, resumable; --list-only previews the file list)
+python download_rnacentral.py --out-dir ../../data/l2 --list-only
+python download_rnacentral.py --out-dir ../../data/l2
 
-# 2. 过滤 + 精确去重（20-500nt、N<=10%、归一化 T->U；流式，内存 ~1GB）
-python filter_dedup.py --fasta D:/data/l2/rnacentral_active.fasta.gz \
-  --out D:/data/l2/l2_filtered.fasta
+# 2. Filter + exact dedup (20-500 nt, N <= 10%, T->U normalization; streaming, ~1 GB RAM)
+python filter_dedup.py --fasta ../../data/l2/rnacentral_active.fasta.gz \
+  --out ../../data/l2/l2_filtered.fasta
 
-# 3. Token 化存储（扁平 uint16 + offsets，无 padding；train/val 99.5/0.5）
-python tokenize_store.py --fasta D:/data/l2/l2_filtered.fasta --out-dir D:/data/l2
+# 3. Token store (flat uint16 + offsets, no padding; train/val 99.5/0.5)
+python tokenize_store.py --fasta ../../data/l2/l2_filtered.fasta --out-dir ../../data/l2
 ```
 
-## 产物清单
+## Artifacts
 
-| 文件 | 用途 |
+| File | Purpose |
 |---|---|
-| `rnacentral_active.fasta.gz` | 原始语料（10.92GB，可删） |
-| `l2_filtered.fasta` | 过滤+去重后的训练语料（~5-15M 条） |
-| `l2_tokens.u16` + `l2_offsets.npy` | token 化存储（L2-1 预训练直接读） |
-| `l2_train_idx.npy` / `l2_val_idx.npy` | 行索引切分 |
-| `*.stats.json` / `tokenize_stats.json` | 各阶段统计（回传诊断用） |
-
-## 时间/空间预估
-
-| 步骤 | 时间 | 磁盘增量 |
-|---|---|---|
-| 下载 | 1-3 小时（带宽决定） | +11GB |
-| 过滤去重 | 1-2 小时（流式单进程） | +8-12GB |
-| Token 化 | 1-2 小时 | +5-8GB |
-
-## 传 GPU 机
-
-`l2_tokens.u16 + l2_offsets.npy + l2_train_idx.npy + l2_val_idx.npy + tokenize_stats.json`
-（~5-8GB，L2-1 预训练的唯一输入；原始 fasta 不用传）
+| `rnacentral_active.fasta.gz` | raw corpus (10.92 GB, deletable after filtering) |
+| `l2_filtered.fasta` | filtered + deduplicated training corpus (~5–15 M rows) |
+| `l2_tokens.u16` + `l2_offsets.npy` | token store (read directly by L2-1 pretraining) |
+| `l2_train_idx.npy` / `l2_val_idx.npy` | row-index splits |
+| `*.stats.json` / `tokenize_stats.json` | per-stage statistics (for diagnostics) |
