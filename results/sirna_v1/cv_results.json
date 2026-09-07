@@ -1,0 +1,15 @@
+{
+  "model": "sirna v1 (guide 21mer + ESM2 target axis, target-grouped 5-fold)",
+  "pooled": {
+    "spearman": 0.6072682981887598,
+    "pearson": 0.5880897568343929
+  },
+  "per_fold_best": [
+    0.5506099905037932,
+    0.6341083001476417,
+    0.6089766012462384,
+    0.7298683192878059,
+    0.6701076855741975
+  ],
+  "comparator": "RNAGenesis Huesken benchmark (paper, Fig 3h)"
+}

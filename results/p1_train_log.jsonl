@@ -1,0 +1,26 @@
+{"epoch": 1, "step": 783, "train_loss": 0.011017787418331794, "secs": 813.4}
+{"eval": {"mse_DE": 0.05328836991158579, "pearson_delta": 0.4366131180912519, "top50_deg_overlap": 0.2857246376811594, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.618081271648407, "epoch": 1, "step": 783}}
+{"epoch": 2, "step": 1566, "train_loss": 0.0048190203626458155, "secs": 810.5}
+{"eval": {"mse_DE": 0.03701257763148135, "pearson_delta": 0.4867318865751081, "top50_deg_overlap": 0.3197826086956521, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.863006591796875, "epoch": 2, "step": 1566}}
+{"epoch": 3, "step": 2349, "train_loss": 0.004018251674718403, "secs": 810.6}
+{"eval": {"mse_DE": 0.027712441309408215, "pearson_delta": 0.5652203418413629, "top50_deg_overlap": 0.4018840579710145, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.9047554135322571, "epoch": 3, "step": 2349}}
+{"epoch": 4, "step": 3132, "train_loss": 0.003578755488880288, "secs": 810.7}
+{"eval": {"mse_DE": 0.02309725443523369, "pearson_delta": 0.5376240452699186, "top50_deg_overlap": 0.3689855072463768, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.9356707334518433, "epoch": 4, "step": 3132}}
+{"epoch": 5, "step": 3915, "train_loss": 0.004847329142690775, "secs": 810.5}
+{"eval": {"mse_DE": 0.05439503584590239, "pearson_delta": 0.38834325334733527, "top50_deg_overlap": 0.23884057971014494, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.2565942406654358, "epoch": 5, "step": 3915}}
+{"epoch": 6, "step": 4698, "train_loss": 0.0027896772231103787, "secs": 810.3}
+{"eval": {"mse_DE": 0.02196324988608394, "pearson_delta": 0.5385071821172052, "top50_deg_overlap": 0.38760869565217393, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.9453339576721191, "epoch": 6, "step": 4698}}
+{"epoch": 7, "step": 5481, "train_loss": 0.002326134856831042, "secs": 810.2}
+{"eval": {"mse_DE": 0.022405800916899553, "pearson_delta": 0.5348533429206231, "top50_deg_overlap": 0.38442028985507243, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.9603702425956726, "epoch": 7, "step": 5481}}
+{"epoch": 8, "step": 6264, "train_loss": 0.0030548153286781947, "secs": 810.2}
+{"eval": {"mse_DE": 0.023479550480822974, "pearson_delta": 0.5524651109548702, "top50_deg_overlap": 0.39340579710144924, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.8059623837471008, "epoch": 8, "step": 6264}}
+{"epoch": 9, "step": 7047, "train_loss": 0.0027040763740132814, "secs": 811.0}
+{"eval": {"mse_DE": 0.021472248821151327, "pearson_delta": 0.5615968631264081, "top50_deg_overlap": 0.3934782608695652, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.9216481447219849, "epoch": 9, "step": 7047}}
+{"epoch": 10, "step": 7830, "train_loss": 0.04287400165351826, "secs": 810.1}
+{"eval": {"mse_DE": 0.03410656096256382, "pearson_delta": 0.520508813182147, "top50_deg_overlap": 0.3771739130434783, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.7576913833618164, "epoch": 10, "step": 7830}}
+{"epoch": 11, "step": 8613, "train_loss": 0.002364587135768185, "secs": 810.2}
+{"eval": {"mse_DE": 0.023514835969896203, "pearson_delta": 0.5622728159768033, "top50_deg_overlap": 0.4018115942028986, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.8426366448402405, "epoch": 11, "step": 8613}}
+{"epoch": 12, "step": 9396, "train_loss": 0.003913310484338901, "secs": 809.8}
+{"eval": {"mse_DE": 0.03475555584386427, "pearson_delta": 0.5344080518243209, "top50_deg_overlap": 0.3948550724637681, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.6480828523635864, "epoch": 12, "step": 9396}}
+{"epoch": 13, "step": 10179, "train_loss": 0.003182297533168071, "secs": 810.3}
+{"eval": {"mse_DE": 0.022392665517585897, "pearson_delta": 0.5661487336402673, "top50_deg_overlap": 0.4071014492753623, "mse_DE_baseline_ctrl": 0.031590698977682935, "mse_DE_baseline_perturbmean": 0.3257995416749003, "n_eval": 276, "fm_cosine": 0.8439346551895142, "epoch": 13, "step": 10179}}

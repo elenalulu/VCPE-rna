@@ -1,0 +1,11 @@
+{"epoch": 1, "train_loss": 21.65405866128427, "secs": 150.0, "val_patent_group": {"spearman": 0.401767038313323, "pearson": 0.41327208357558787, "enrich_top5": 0.9008189262966333, "n": 21989}}
+{"epoch": 2, "train_loss": 19.606962966918946, "secs": 157.5, "val_patent_group": {"spearman": 0.4315167374242905, "pearson": 0.4385757703091495, "enrich_top5": 0.9645131938125568, "n": 21989}}
+{"epoch": 3, "train_loss": 19.057739603960954, "secs": 159.7, "val_patent_group": {"spearman": 0.4394443630598235, "pearson": 0.4542745454853835, "enrich_top5": 1.191992720655141, "n": 21989}}
+{"epoch": 4, "train_loss": 18.643067239831996, "secs": 165.2, "val_patent_group": {"spearman": 0.4631588083139787, "pearson": 0.4745079033589268, "enrich_top5": 1.0418562329390355, "n": 21989}}
+{"epoch": 5, "train_loss": 18.362097005490902, "secs": 155.1, "val_patent_group": {"spearman": 0.48278944000388485, "pearson": 0.49287768413070043, "enrich_top5": 1.1373976342129208, "n": 21989}}
+{"epoch": 6, "train_loss": 18.10830024436668, "secs": 157.4, "val_patent_group": {"spearman": 0.47472036993966965, "pearson": 0.4848428455912858, "enrich_top5": 1.1555959963603275, "n": 21989}}
+{"epoch": 7, "train_loss": 17.92446295420329, "secs": 146.0, "val_patent_group": {"spearman": 0.47149059742175564, "pearson": 0.48107071965589643, "enrich_top5": 1.151046405823476, "n": 21989}}
+{"epoch": 8, "train_loss": 17.766593940169724, "secs": 145.6, "val_patent_group": {"spearman": 0.49095866065325766, "pearson": 0.4997823068030566, "enrich_top5": 1.251137397634213, "n": 21989}}
+{"epoch": 9, "train_loss": 17.620178674768518, "secs": 156.3, "val_patent_group": {"spearman": 0.49897791767624367, "pearson": 0.5068841427049325, "enrich_top5": 1.1692447679708826, "n": 21989}}
+{"epoch": 10, "train_loss": 17.525386139198584, "secs": 164.0, "val_patent_group": {"spearman": 0.4974145445023634, "pearson": 0.5053997166297776, "enrich_top5": 1.1737943585077342, "n": 21989}}
+{"gene_holdout": {"spearman": 0.29241892473702813, "pearson": 0.3002111089860549, "enrich_top5": 0.2440590879897238, "n": 31147}, "holdout_genes": ["APOB", "F12", "F7", "FUS", "GHR", "GRN", "IFNAR1", "IRF5", "KLKB1", "MAPT", "PLP1", "PTBP1", "SCN1A", "SCNN1A", "YAP1"]}

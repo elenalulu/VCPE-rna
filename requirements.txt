@@ -1,0 +1,13 @@
+# core
+torch>=2.1
+numpy
+pandas
+scipy
+scikit-learn
+anndata
+h5py
+requests
+safetensors
+
+# optional: eval_headtohead.py / predict_service.py hybrid routing
+# xgboost

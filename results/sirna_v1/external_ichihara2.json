@@ -1,0 +1,33 @@
+{
+  "model": "sirna v1 (Huesken full-train) -> external Takayuki/Ichihara_2007_2",
+  "train": {
+    "rows": 2431,
+    "targets": 30
+  },
+  "test": {
+    "rows": 419,
+    "dropped_empty_target": 0,
+    "targets": 12,
+    "esm2_covered": 11
+  },
+  "pooled": {
+    "spearman": 0.5875777105344091,
+    "pearson": 0.5566284219573563
+  },
+  "per_target_spearman": {
+    "CDKN2A": 0.5833333333333334,
+    "CDKN2B": 0.6211273247903218,
+    "EGFR": 0.6439560439560439,
+    "ERBB2": 0.5781102481154147,
+    "ESR1": 0.5030303030303029,
+    "FADS1": 0.7,
+    "GAPDH": 0.7488721804511278,
+    "HLA-DQA1": 0.46208004324077356,
+    "LMNA": 0.6378656884926176,
+    "TNFRSF10B": 0.7857142857142859,
+    "TP53": 0.6064108264801615,
+    "nan": 0.5104895104895105
+  },
+  "per_target_median": 0.6137690756352416,
+  "internal_cv_reference": 0.6387
+}

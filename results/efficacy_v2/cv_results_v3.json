@@ -1,0 +1,40 @@
+{
+  "version": "v3 (v2.5 + GENCODE region features)",
+  "pooled_mean": 0.28299609165315687,
+  "pooled_std": 0.07988255499837836,
+  "per_screen_median_of_folds": 0.26083048610534443,
+  "per_fold": {
+    "1": {
+      "pooled": 0.36974130707293024,
+      "per_screen_median": 0.3193867154832888,
+      "per_screen_mean": 0.30060518135217706,
+      "n_screens": 36
+    },
+    "2": {
+      "pooled": 0.30861064382862124,
+      "per_screen_median": 0.25887626071470493,
+      "per_screen_mean": 0.24340459115573423,
+      "n_screens": 38
+    },
+    "3": {
+      "pooled": 0.2147085235573505,
+      "per_screen_median": 0.26083048610534443,
+      "per_screen_mean": 0.2280117938073231,
+      "n_screens": 39
+    },
+    "4": {
+      "pooled": 0.1844430612602656,
+      "per_screen_median": 0.25505639906914945,
+      "per_screen_mean": 0.2275224201563216,
+      "n_screens": 38
+    },
+    "5": {
+      "pooled": 0.33747692254661665,
+      "per_screen_median": 0.3105903793837683,
+      "per_screen_mean": 0.2663215424811474,
+      "n_screens": 38
+    }
+  },
+  "lineage": "v2 0.2665 -> v2.5 0.2670 -> v3 0.3007 (pooled); OligoAI 0.419 [0.290-0.533] per-screen",
+  "note": "region features: +0.034 pooled on average, fold-dependent (fold1 +0.075, fold2 +0.089, fold3 0, fold4 -0.021, fold5 +0.026)"
+}

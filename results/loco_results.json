@@ -1,0 +1,12 @@
+{
+  "holdout": "hepg2",
+  "nearest": "jurkat",
+  "nearest_sim": 0.9638611695919506,
+  "zero_shot_pearson_dev": 0.08118943574449851,
+  "fallback_pearson_dev": 0.04727654566199707,
+  "delta": 0.03391289008250144,
+  "n_eval": 2355,
+  "n_hvg": 2000,
+  "gate": "FAIL",
+  "gate_rule": "zero-shot - fallback >= +0.02 且 zero-shot > 0.15；FAIL = 永久关闭（Route A 已消除数据条件借口）"
+}

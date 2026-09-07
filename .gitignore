@@ -1,0 +1,28 @@
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv*/
+.ipynb_checkpoints/
+
+# data (see data/README.md — acquired separately, not redistributed)
+data/*
+!data/README.md
+
+# large artifacts (release via GitHub Releases / HuggingFace)
+results/**/ckpt_*.pt
+results/**/*.safetensors
+vcpe_cache*.json.gz
+p1_out/
+p2_out/
+p3_out/
+l2_pretrain/
+
+# local runtime
+*.log
+nohup.out
+.tmp/
+
+# script caches (auto-downloaded)
+src/l2/9606.protein.info.*
+src/efficacy/*_cache.json

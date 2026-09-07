@@ -1,0 +1,45 @@
+{
+  "version": "v2.5 (cleanup + alias + per-screen metric + preds saved)",
+  "pooled_mean": 0.267,
+  "pooled_std": 0.0319,
+  "per_screen_median_of_folds": 0.2339245803187795,
+  "comparator": "OligoAI 0.419 median [0.290-0.533] (per-screen, 299 screens)",
+  "per_fold": {
+    "1": {
+      "pooled_spearman": 0.2933901938792336,
+      "per_screen_median": 0.33818596543509905,
+      "per_screen_mean": 0.27202400711879143,
+      "n_screens": 36,
+      "best_spearman_over_epochs": 0.295
+    },
+    "2": {
+      "pooled_spearman": 0.24580453660802762,
+      "per_screen_median": 0.2339245803187795,
+      "per_screen_mean": 0.22326860618520564,
+      "n_screens": 38,
+      "best_spearman_over_epochs": 0.2491
+    },
+    "3": {
+      "pooled_spearman": 0.22425750271535305,
+      "per_screen_median": 0.21837680899489012,
+      "per_screen_mean": 0.21992591148814433,
+      "n_screens": 39,
+      "best_spearman_over_epochs": 0.2243
+    },
+    "4": {
+      "pooled_spearman": 0.20039183438170108,
+      "per_screen_median": 0.24621799339783718,
+      "per_screen_mean": 0.22173356819856654,
+      "n_screens": 38,
+      "best_spearman_over_epochs": 0.2547
+    },
+    "5": {
+      "pooled_spearman": 0.3119404650874521,
+      "per_screen_median": 0.2209032369270231,
+      "per_screen_mean": 0.21998607738018913,
+      "n_screens": 38,
+      "best_spearman_over_epochs": 0.3119
+    }
+  },
+  "note": "v2.5 vs v2 pooled: 0.2670 vs 0.2665 \u2014 cleanup/alias negligible on pooled; gap to OligoAI is methodological (target-region features, architecture, tuning)"
+}
