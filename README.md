@@ -80,18 +80,20 @@ sirna_v1_full_train.pt     →  results/sirna_v1/sirna_v1_full_train.pt
 vcpe_cache_v6_*.json.gz    →  your virtual-cell engine's cache directory (drop-in)
 ```
 
-**What you still need:** the ESM2 gene-embedding table and one Perturb-seq h5ad for the
-control context (public/third-party data, ~3 GB — see [data/README.md](data/README.md)).
-This is a method dependency (conditioning lookup + control-expression baseline), not a
-training cost.
+**What you still need:** the ESM2 gene-embedding table, one Perturb-seq h5ad for the
+control context, and `gene_transcripts.fa` (public/third-party data, ~3 GB total — see
+[data/README.md](data/README.md)). These are method dependencies (conditioning lookup +
+control-expression baseline + RNA sequences), not a training cost.
 
-**1) Build a platform cache from the released P3 ckpt** (~10–20 min CPU, no MAP/SE deps):
+**1) Build a platform cache from the released P3 ckpt** (~30 min CPU, no MAP/SE deps;
+the RNA sequence encoder embedded in the ckpt is loaded automatically):
 
 ```bash
 python src/maprna_p3/export_vcpe_cache_v2.py \
   --ckpt results/p3_v21e/ckpt_p3_best_dev.pt \
   --adamson_h5ad data/adamson/perturb_processed.h5ad \
   --esm_table data/drive_weights/Homo_sapiens.GRCh38.gene_symbol_to_embedding_ESM2.pt \
+  --fasta data/gene_transcripts.fa \
   --out vcpe_cache_v6_k562a.json.gz --context_name k562a
 ```
 
