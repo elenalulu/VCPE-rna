@@ -104,13 +104,16 @@ Other contexts: `--context_name hepg2` / `jurkat` (+ `--ctrl_h5ad`); or download
 prebuilt `vcpe_cache_v6_*.json.gz` directly from the release.
 
 **2) ASO / siRNA efficacy scoring** (Python API; loads `results/efficacy_v1/ckpt_efficacy_v1.pt`
-from that default path, no args needed):
+from that default path, no args needed). **Always pass the chemistry** — the score is
+highly wing-modification-sensitive (same sequence: ~11% as plain DNA vs ~38% with LNA/cEt wings):
 
 ```python
 import sys; sys.path.insert(0, "src/efficacy")
-from predict_service import predict_inhibition
-predict_inhibition("TGCATCGTACGTAGCTGATC", "APOC3", cell_line="hepg2")
-# → inhibition_pct (0–95) and kd (0.20–0.95): gapmer sequence + target gene → knockdown depth
+from predict_service import predict_kd_hybrid   # platform entry: hybrid routing
+predict_kd_hybrid("TGCATCGTACGTAGCTGATC", "APOC3", cell_line="hepg2", wing_mod="lna")
+# → inhibition_pct / kd (+ model_source: 'xgboost_v5' when the chemistry-aware model
+#   applies and RNA_ROBOT_HOME is set, else 'transformer')
+# wing_mod: 'dna' (default) / 'lna' (→ cEt) / 'moe' / 'mix'; see predict_service.py
 ```
 
 **3) Full virtual-cell page integration** (the rna_robot platform pattern): the cache file
