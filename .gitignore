@@ -8,6 +8,10 @@ __pycache__/
 # data (see data/README.md — acquired separately, not redistributed)
 data/*
 !data/README.md
+# exception: sirnamod_xgb_v1 is our own artifact (577 KB) — ships in-repo
+!data/drive_weights/
+data/drive_weights/*
+!data/drive_weights/sirnamod_xgb_v1.joblib
 
 # large artifacts (release via GitHub Releases / HuggingFace)
 results/**/ckpt_*.pt

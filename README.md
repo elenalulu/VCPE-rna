@@ -19,6 +19,16 @@ response direction and magnitude — a commercially usable replacement for Non-C
 
 ## Highlights
 
+- **Chemistry is trained jointly with sequence — no bolted-on modification sub-model.** The ASO
+  efficacy head embeds per-position **sugar** (2′-F / 2′-OMe / unmodified, …) and **backbone**
+  (PS/PO) features at the same level as the bases (16-d each → 48-d per position) into the *same*
+  2-layer transformer (`model_efficacy.py`), so modification × sequence-context interactions are
+  captured directly by attention. The siRNA modification line is a **separate** XGBoost model
+  (`sirnamod_model.py`, siRNAmod / Martinelli 2023, 907 modified guides) with three feature tiers —
+  global per-strand modification counts, per-position modification/sequence one-hots, and
+  region-crossed indicators (seed 2–8 / cleavage 10–11) — sharing no parameters with the ASO head;
+  its trained artifact ships in-repo (`data/drive_weights/sirnamod_xgb_v1.joblib`). Delivery
+  (GalNAc/LNP/route) remains deliberately out of scope — see the model-scope note below.
 - **A documented negative result turned win** — the P2 "pass" was retracted by our own diagnostics: conditioning was short-circuited by the shared-response core. The per-gene deviation head (P2.3-B) revived conditioning in **80 seconds** of training. Full evidence chain included.
 - **Data scaling done cheaply** — 1,843 → 16,276 perturbations (×8.8) via scPerturb ingestion; legacy-domain pearson_dev **0.31 → 0.71** with a 5.7M-parameter head.
 - **Zero-dependency platform integration** — the engine ships as a precomputed cache (`vcpe_cache.json.gz`) with a schema isomorphic to the platform's existing cache: swapping the file swaps the engine.
