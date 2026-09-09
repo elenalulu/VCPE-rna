@@ -6,8 +6,7 @@
 
 A license-clean (MIT / Apache-2.0 all the way down) **knockdown perturbation-response prediction engine**.
 Given a knockdown perturbation (CRISPRi / siRNA / ASO target gene), it predicts the transcriptome-wide
-response direction and magnitude — a commercially usable replacement for Non-Commercial weights
-such as AIDO.RNA-Pert.
+response direction and magnitude — a commercially usable replacement for Non-Commercial weights.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-green.svg)]()
