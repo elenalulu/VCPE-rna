@@ -116,6 +116,14 @@ predict_kd_hybrid("TGCATCGTACGTAGCTGATC", "APOC3", cell_line="hepg2", wing_mod="
 # wing_mod: 'dna' (default) / 'lna' (→ cEt) / 'moe' / 'mix'; see predict_service.py
 ```
 
+**Model scope — read before over-interpreting.** Inputs are gapmer/guide **sequence + wing
+chemistry + cell line** (plus dose-missing handling). Chemistry is a first-class feature and
+moves predicted potency by tens of percentage points. **Delivery is NOT a model input**:
+GalNAc / LNP / dosing route / tissue exposure are out of scope for v1 (the training data is
+in-vitro, delivery-normalized potency). Treat outputs as *intrinsic, chemistry-aware
+knockdown potency* — not as tissue-level efficacy, which would require a PK/PD delivery
+layer (future work).
+
 **3) Full virtual-cell page integration** (the rna_robot platform pattern): the cache file
 alone drives post-knockdown response display — see
 [docs/reports/p3_platform_integration.md](docs/reports/p3_platform_integration.md).
@@ -164,3 +172,7 @@ checksums (`results/MANIFEST_sha256.txt`) and are intentionally kept out of git.
 1. **Evaluation must include shared-component-free discrimination metrics** (`pearson_dev` / `top50_dev` + zeroPert ablation) — otherwise any gate can be fooled by the shared response (the P2 lesson).
 2. **Additive tokens get structurally drowned** in a large backbone's residual stream — in data-limited regimes, a per-gene direct residual head is the right architecture (the P2.3-B conclusion).
 3. **Re-calibrate LR after data scaling**: ×8.8 data + lr 1e-3 collapses into the zero-residual basin; lr 3e-4 trains 40 epochs with zero instability.
+4. **Chemistry is in the model; delivery is deliberately out** — wing modification alone
+   shifts predicted inhibition 11% → 38% on the same gapmer, while GalNAc/LNP/route are not
+   modeled at all (in-vitro, delivery-normalized training data). Delivery-aware extrapolation
+   belongs to a PK/PD layer, not to the efficacy head — don't read `kd` as tissue exposure.
