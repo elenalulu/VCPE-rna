@@ -150,13 +150,28 @@ def main():
     esm = load_esm_matrix(args.esm_table)
 
     rna_enc = None
+    rna_state = None
     if args.rna_encoder_ckpt:
         from rna_encoder import RNAEncoder, load_fasta_symbol_seqs
+        rna_state = torch.load(args.rna_encoder_ckpt, map_location="cpu", weights_only=False)
+    else:
+        # v21e+ ckpts embed the aligned RNA sequence encoder — reuse it so the
+        # inference path needs no extra download. (Without this, a ckpt that
+        # carries rna_encoder.* keys fails strict load_state_dict below.)
+        _rna_keys = [k for k in ck.get("model_state_dict", {}) if k.startswith("rna_encoder.")]
+        if _rna_keys:
+            from rna_encoder import RNAEncoder, load_fasta_symbol_seqs
+            rna_state = {k[len("rna_encoder."):]: v
+                         for k, v in ck["model_state_dict"].items() if k.startswith("rna_encoder.")}
+            print(f"[rna] ckpt embeds rna_encoder weights ({len(_rna_keys)} keys) — loading from ckpt", flush=True)
+    if rna_state is not None:
+        if not args.fasta:
+            sys.exit("ERROR: this checkpoint contains an RNA sequence encoder — "
+                     "--fasta (gene_transcripts.fa, see data/README.md) is required")
         rna_enc = RNAEncoder(d_model=256, max_len=600).to(device).eval()
-        state = torch.load(args.rna_encoder_ckpt, map_location="cpu", weights_only=False)
-        if isinstance(state, dict) and "rna_encoder" in state:
-            state = state["rna_encoder"]
-        rna_enc.load_state_dict(state)
+        if isinstance(rna_state, dict) and "rna_encoder" in rna_state:
+            rna_state = rna_state["rna_encoder"]
+        rna_enc.load_state_dict(rna_state)
         symbol_map, ensembl_map = load_fasta_symbol_seqs(args.fasta)
         print("[rna] precomputing embeddings for all table rows...", flush=True)
         rna_embs = batched_rna_embeddings(rna_enc, symbol_map, ensembl_map,

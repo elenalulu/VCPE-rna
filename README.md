@@ -19,10 +19,9 @@ response direction and magnitude — a commercially usable replacement for Non-C
 
 ## Highlights
 
-- **License-clean by construction** — architecture upstream is [MAP](https://github.com/MAGIC-AI4Med/MAP) (MIT) + MAP-KG (Apache-2.0); the RNA sequence encoder is self-trained; AIDO.RNA (Non-Commercial) is never used in any deliverable. That constraint is the reason this project exists.
 - **A documented negative result turned win** — the P2 "pass" was retracted by our own diagnostics: conditioning was short-circuited by the shared-response core. The per-gene deviation head (P2.3-B) revived conditioning in **80 seconds** of training. Full evidence chain included.
 - **Data scaling done cheaply** — 1,843 → 16,276 perturbations (×8.8) via scPerturb ingestion; legacy-domain pearson_dev **0.31 → 0.71** with a 5.7M-parameter head.
-- **Zero-dependency platform integration** — the engine ships as a precomputed cache (`vcpe_cache.json.gz`) with a schema isomorphic to the platform's existing AIDO cache: swapping the file swaps the engine.
+- **Zero-dependency platform integration** — the engine ships as a precomputed cache (`vcpe_cache.json.gz`) with a schema isomorphic to the platform's existing cache: swapping the file swaps the engine.
 
 ## Key Results
 
@@ -74,16 +73,66 @@ src/
   l2/               RNAcentral download → filter/dedup → tokenize → MLM pretrain → align
   efficacy/         ASO/siRNA efficacy heads (ASO Atlas / OligoGym / Huesken) + predict service
   data_expansion/   scPerturb Zenodo download & ingestion
-  export_vcpe_cache.py   platform cache export (AIDO-cache-isomorphic schema)
+  export_vcpe_cache.py   platform cache export 
 docs/               PLAN, full evidence-chain reports
 results/            train logs, CV metrics, eval artifacts (large ckpts not in git — see below)
 data/               data acquisition guide (data itself is not redistributed)
 ```
 
-## Quickstart
+## Use a pretrained checkpoint (inference path — start here)
 
-The P3 response head has **no dependency** on the SE backbone, the MAP repo, or flash-attention —
-it reproduces in minutes on a single GPU or CPU:
+The [release assets](https://github.com/elenalulu/VCPE-rna/releases/tag/VCPE) are
+**inference-ready** — you do **not** need to train anything to use the engine. Training
+is only for independent reproduction (see the next section). Place the downloaded files
+as follows:
+
+```
+ckpt_p3_best_dev.pt        →  results/p3_v21e/ckpt_p3_best_dev.pt   (or any path, pass via --ckpt)
+ckpt_efficacy_v1.pt        →  results/efficacy_v1/ckpt_efficacy_v1.pt
+sirna_v1_full_train.pt     →  results/sirna_v1/sirna_v1_full_train.pt
+vcpe_cache_v6_*.json.gz    →  your virtual-cell engine's cache directory (drop-in)
+```
+
+**What you still need:** the ESM2 gene-embedding table and one Perturb-seq h5ad for the
+control context (public/third-party data, ~3 GB — see [data/README.md](data/README.md)).
+This is a method dependency (conditioning lookup + control-expression baseline), not a
+training cost.
+
+**1) Build a platform cache from the released P3 ckpt** (~10–20 min CPU, no MAP/SE deps):
+
+```bash
+python src/maprna_p3/export_vcpe_cache_v2.py \
+  --ckpt results/p3_v21e/ckpt_p3_best_dev.pt \
+  --adamson_h5ad data/adamson/perturb_processed.h5ad \
+  --esm_table data/drive_weights/Homo_sapiens.GRCh38.gene_symbol_to_embedding_ESM2.pt \
+  --out vcpe_cache_v6_k562a.json.gz --context_name k562a
+```
+
+Output: a cache in the platform's schema (`genes[sym] = {top_up,
+top_down}` ranked by the residual after common-core subtraction, plus `common_response_core`
+and MIT/Apache-only metadata) — swapping the file swaps the engine, zero new dependencies.
+Other contexts: `--context_name hepg2` / `jurkat` (+ `--ctrl_h5ad`); or download the
+prebuilt `vcpe_cache_v6_*.json.gz` directly from the release.
+
+**2) ASO / siRNA efficacy scoring** (Python API; loads `results/efficacy_v1/ckpt_efficacy_v1.pt`
+from that default path, no args needed):
+
+```python
+import sys; sys.path.insert(0, "src/efficacy")
+from predict_service import predict_inhibition
+predict_inhibition("TGCATCGTACGTAGCTGATC", "APOC3", cell_line="hepg2")
+# → inhibition_pct (0–95) and kd (0.20–0.95): gapmer sequence + target gene → knockdown depth
+```
+
+**3) Full virtual-cell page integration** (the rna_robot platform pattern): the cache file
+alone drives post-knockdown response display — see
+[docs/reports/p3_platform_integration.md](docs/reports/p3_platform_integration.md).
+
+## Reproduce from scratch (training path)
+
+The numbers above can be reproduced independently. The P3 response head has **no dependency**
+on the SE backbone, the MAP repo, or flash-attention — it trains in minutes on a single GPU
+(~80 s for 60 epochs) or ~2 h on CPU:
 
 ```bash
 pip install -r requirements.txt
@@ -92,7 +141,7 @@ pip install -r requirements.txt
 #    - Perturb-seq h5ad in GEARS format (adamson / norman / replogle_rpe1_essential)
 #    - ESM2 gene embedding table Homo_sapiens.GRCh38.gene_symbol_to_embedding_ESM2.pt
 
-# 2) Train the P3 per-gene deviation head (60 epochs ≈ 80 s on GPU; CPU works too)
+# 2) Train the P3 per-gene deviation head (60 epochs ≈ 80 s on GPU, ~2 h on CPU)
 python src/maprna_p3/train_p3.py \
   --data_dirs data/adamson/perturb_processed.h5ad \
               data/norman/perturb_processed.h5ad \
@@ -106,8 +155,9 @@ python src/maprna_p3/train_p3.py \
 
 **Pretrained artifacts.** `results/p3_v21e/` ships the aligned RNA sequence encoder
 (`rna_enc_from_ckpt.pt`, 9 MB) and an example full-gene vector cache. Full checkpoints
-(P3 response head 428 MB, efficacy heads ~410 MB, …) are planned for GitHub Releases /
-HuggingFace and are intentionally kept out of git.
+(P3 response head 428 MB, efficacy heads ~410 MB, platform caches) live in the
+[GitHub Release](https://github.com/elenalulu/VCPE-rna/releases/tag/VCPE) with SHA-256
+checksums (`results/MANIFEST_sha256.txt`) and are intentionally kept out of git.
 
 ## License & Attribution
 
@@ -115,7 +165,7 @@ HuggingFace and are intentionally kept out of git.
 - Architecture upstream: [MAP](https://github.com/MAGIC-AI4Med/MAP) (MIT) + MAP-KG (Apache-2.0); the P2.3-B deviation head is an independent implementation
 - Per-dataset licenses and acquisition paths: [data/README.md](data/README.md)
 - ⚠️ **ASO Atlas is derived from USPTO patents.** This repository ships training/eval code only, never the data; any commercial use requires independent legal review
-- AIDO.RNA-650M (Non-Commercial) was used for internal ablation only and appears in no deliverable — which is precisely why this project exists
+
 
 ## Methodology Notes (selected)
 
