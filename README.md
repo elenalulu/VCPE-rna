@@ -63,21 +63,8 @@ response direction and magnitude — a commercially usable replacement for Non-C
 | [docs/reports/l2_pretraining_log.md](docs/reports/l2_pretraining_log.md) | L2 encoder pretraining log |
 | [docs/virtual_liver_p0_report.md](docs/virtual_liver_p0_report.md) | Virtual-liver P0: organ-level exam design, donor-context repair (P0.5), G0 adjudication |
 
-## Repository Layout
 
-```
-src/
-  maprna_p1/        P1 training (MAP base + knockdown conditioning; needs patched MAP repo + SE weights)
-  maprna_p2/        P2 dual-axis training + RNA sequence encoder (InfoNCE alignment) + diag_fc diagnostics
-  maprna_p3/        P2.3-B per-gene deviation head (standalone, no SE/MAP deps) + data ingestion + fair eval
-  l2/               RNAcentral download → filter/dedup → tokenize → MLM pretrain → align
-  efficacy/         ASO/siRNA efficacy heads (ASO Atlas / OligoGym / Huesken) + predict service
-  data_expansion/   scPerturb Zenodo download & ingestion
-  export_vcpe_cache.py   platform cache export 
-docs/               PLAN, full evidence-chain reports
-results/            train logs, CV metrics, eval artifacts (large ckpts not in git — see below)
-data/               data acquisition guide (data itself is not redistributed)
-```
+## How to start
 
 ## Use a pretrained checkpoint (inference path — start here)
 
